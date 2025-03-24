@@ -51,6 +51,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
 
     default:
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
         // 处理所有未显式列出的消息
         // 通常将未处理的消息交给 DefWindowProc 处理，以确保系统默认行为
         // 目前为空，未实现具体逻辑
