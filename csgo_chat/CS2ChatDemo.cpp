@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Windows.h>
 #include "Memory.h"
+#include "ExWindow.h"
 using namespace std;
 
 void Init() {
@@ -35,4 +36,6 @@ int main()
 	cout << "\n CS2¸¨ÖúDemo" << endl;
 	cout << "\n ------------------------------------------" << endl;
 	cout << "\n CS2¸¨ÖúDemo" << endl;
+
+	CreateExternalWindow();
 }
