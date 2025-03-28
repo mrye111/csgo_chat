@@ -132,12 +132,14 @@
     <ClCompile Include="ExWindow.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Offsets.cpp" />
+    <ClCompile Include="Structures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Draw.h" />
     <ClInclude Include="ExWindow.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Offsets.h" />
+    <ClInclude Include="Structures.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

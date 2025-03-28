@@ -6,6 +6,7 @@ using namespace std;
 
 void Init() {
 	mem.Setup();
+	mem.GetModules();
 }
 
 int main()
