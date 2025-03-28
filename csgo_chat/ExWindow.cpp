@@ -1,4 +1,82 @@
 #include "ExWindow.h"
+#include"Memory.h"
+
+
+
+void Loop()
+{
+    //读取人物本身数据
+    DWORD64 LocalPlayer = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_LocalPlayer);
+    //读取阵营标志位
+    DWORD64 LocalTeam = mem.ReadMeory<DWORD64>(LocalPlayer + offsets.m_iTeamNum);
+
+    // 创建画布设备上下文(DC)，通过获取指定窗口的DC来实现绘图
+    HDC hDc = GetDC(draw.hExWnd);
+
+    // 创建画刷
+    // GetStockObject 获取一个预定义的系统画刷(这里使用 BLACK_BRUSH)
+    // 将其转换为 HBRUSH 类型以匹配预期类型
+    HBRUSH hHrush = (HBRUSH)GetStockObject(BLACK_BRUSH); // 使用默认的黑色画刷
+
+    // 使用黑色画刷填充设备上下文中指定的矩形区域(draw.rectEx)
+    FillRect(hDc, &draw.rectEx, hHrush);
+
+    // 清理资源，通过删除画刷对象来释放内存
+    DeleteObject(hHrush);
+
+
+
+    if (LocalPlayer)
+    {
+        //遍历所有角色
+        for (int i = 0; i < 32; i++)
+        {
+            //获取每个玩家的地址，每个地址8字节,所以要乘以8
+            DWORD64 Entity = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList + i * 0x8);
+            //判断是否是自己，如果是自己的话，跳过
+            if (LocalPlayer == Entity) { continue; }
+            //判断是否为空，为空跳过
+            if (Entity == 0) { continue; }
+
+            //使用我们声明的结构体Vec3和Vec2结构体，用于存储人物世界坐标和屏幕坐标
+            Vec3 entityPos3;//人物世界坐标
+            Vec2 entityPos2;//屏幕坐标
+
+            //每个浮点型占4字节，所以要+4，来获取xyz的值
+            entityPos3.x =  mem.ReadMeory<float>(Entity + offsets.m_fPos + 0x0);//x
+            entityPos3.y =  mem.ReadMeory<float>(Entity + offsets.m_fPos + 0x4);//y
+            entityPos3.z =  mem.ReadMeory<float>(Entity + offsets.m_fPos + 0x8);//z
+
+            //获取敌人的阵营，数据类型是BYTE。要么是02CT,要么是03C
+            DWORD teamId = mem.ReadMeory<BYTE>(Entity + offsets.m_iTeamNum);
+            //判断数据是否为空
+            if (teamId != 2 && teamId != 3){ continue; }
+            //判断是否为敌人
+            if (teamId != LocalTeam) {
+                //获取敌人血量
+                DWORD entityHealth = mem.ReadMeory<int>(Entity + offsets.m_iHealth);
+                //判断敌人是否存活，并且是否是正确的血量数值,并且屏幕坐标转换成功
+                if (0 < entityHealth && entityHealth <= 100 && draw.WorldToScreen(entityPos3, entityPos2))
+                {
+                    //遍历人物的骨骼点
+                    Vec3 tmpBone3;
+                    Vec2 tmpBone2;
+                    for (int i = 0; i < 50; i++)
+                    {   
+                        DWORD64 other_Adress_Entity  = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList2 + i * 0x8);
+                        mem.ReadBone(other_Adress_Entity, i, tmpBone3);
+                        wchar_t buffer[MAXBYTE];
+                        if (draw.WorldToScreen(tmpBone3, tmpBone2)) {
+                            TextOut(hDc, tmpBone2.x, tmpBone2.y, buffer, 2);
+                        }
+                    }
+                }
+            }
+
+
+        }
+    }
+}
 
 /*
 1、设计注册窗口类
@@ -26,6 +104,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         // wParam: 指向目标设备上下文的句柄 (HDC)
         // lParam: 指定打印选项（如PRF_CHECKVISIBLE等标志）
         // 通常用于自定义窗口的打印行为，目前为空，未实现具体逻辑
+        Loop();
         break;
 
     case WM_CREATE:
@@ -40,6 +119,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         // wParam: 未使用
         // lParam: 未使用
         // 常用于清理资源（如释放内存、保存状态等），目前为空
+        DestroyWindow(hwnd);
         break;
 
     case WM_CLOSE:
@@ -48,6 +128,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         // lParam: 未使用
         // 默认情况下会调用 DestroyWindow 来销毁窗口，可在此添加确认逻辑
         // 目前为空，未阻止默认关闭行为
+        PostQuitMessage(0);
         break;
 
     default:
@@ -162,7 +243,7 @@ void CreateExternalWindow()
         // 范围 0-255，0 表示完全透明，255 表示完全不透明
         // 此处设为 0，结合 LWA_ALPHA 标志，使整个窗口完全透明
 
-        LWA_ALPHA // 操作标志
+        LWA_COLORKEY // 操作标志
         // LWA_ALPHA: 使用第三个参数（Alpha 值）控制窗口的整体透明度
         // 注意：未使用 LWA_COLORKEY，因此第二个参数（颜色键）在此上下文中不起作用
     );
@@ -229,4 +310,6 @@ void CreateExternalWindow()
        }
 
    }
-};
+}
+
+;

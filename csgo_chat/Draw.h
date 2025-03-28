@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include "Structures.h"
+#include "Memory.h"
 using namespace std;
 //绘制类：游戏窗口相关信息
 class Draw

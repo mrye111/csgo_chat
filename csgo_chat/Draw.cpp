@@ -21,8 +21,13 @@ void Draw::GetWindowInfo()
 
 BOOL Draw::WorldToScreen(Vec3& wordPos, Vec2& screenPos)
 {
+
+    GetWindowInfo();
     //游戏四维矩阵
     float matrix[4][4];
+
+    //二进制64位读取游戏四维矩阵 4*4*4  
+    ReadProcessMemory(offsets.hProcess, (LPCVOID)(offsets.clientBase + offsets.dw_ViewMatrix), matrix, 64, NULL);
     //世界坐标转剪辑坐标
     Vec4 clipPos;
     clipPos.x = matrix[0][0] * clipPos.x + matrix[0][1] * clipPos.y + matrix[0][2] * clipPos.z + matrix[0][3] * clipPos.w;

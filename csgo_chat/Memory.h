@@ -47,6 +47,30 @@ class Memory
 			);
 		};
 
+		//读取人物骨骼
+		void ReadBone(DWORD64 dwEntity, int nBoneIndex, Vec3& bonePos) {
+			//通过偏移找到骨骼基址
+			DWORD64 tmp, tmp1, tmp2, tmp3 ,tmp4, tmp5,dwBoneMatrix;
+			tmp = 0x00;
+			tmp1 = 0X18;
+			tmp2 = 0xD8;
+			tmp3 = 0x10;
+			tmp4 = 0xD8;
+			tmp5 = 0x00;
+			ReadMeory<DWORD64>(dwEntity + tmp);
+			ReadMeory<DWORD64>(tmp + tmp1);
+			ReadMeory<DWORD64>(tmp + tmp2);
+			ReadMeory<DWORD64>(tmp + tmp3);
+			ReadMeory<DWORD64>(tmp + tmp4);
+			dwBoneMatrix = ReadMeory<DWORD64>(tmp + tmp5);
+
+			bonePos.x = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
+			bonePos.y = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
+			bonePos.z = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
+
+		
+
+		}
 		
 };
 extern Memory mem;
