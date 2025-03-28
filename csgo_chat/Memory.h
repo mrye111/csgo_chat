@@ -3,6 +3,7 @@
 #include <iostream>
 #include <Tlhelp32.h>
 #include "Offsets.h"
+#include "Structures.h"
 using namespace std;
 //游戏内存数据
 class Memory
