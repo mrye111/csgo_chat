@@ -5,7 +5,8 @@ using namespace std;
 //二维屏幕坐标结构体
 struct Vec2
 {
-    float x, y;
+    float x;
+    float y;
 };
 
 
@@ -13,11 +14,17 @@ struct Vec2
 //三维世界坐标结构体
 struct Vec3
 {
-    float x, y, z;
+    float x;
+    float y;
+    float z,
 };
 
 //四维结构体
 struct Vec4
 {
-    float x, y, z, w;
+    float x;
+    float y;
+    float z,
+    float w,
+
 };
