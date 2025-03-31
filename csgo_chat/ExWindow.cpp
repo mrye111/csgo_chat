@@ -38,8 +38,8 @@ void Loop()
             if (Entity == 0) { continue; }
 
             //使用我们声明的结构体Vec3和Vec2结构体，用于存储人物世界坐标和屏幕坐标
-            Vec3 entityPos3;//人物世界坐标
-            Vec2 entityPos2;//屏幕坐标
+            Vec3 entityPos3,enetityHeadPos3;//人物世界坐标
+            Vec2 entityPos2,enetityHeadPos2;//屏幕坐标
 
             //每个浮点型占4字节，所以要+4，来获取xyz的值
             entityPos3.x =  mem.ReadMeory<float>(Entity + offsets.m_fPos + 0x0);//x
@@ -57,19 +57,41 @@ void Loop()
                 //判断敌人是否存活，并且是否是正确的血量数值,并且屏幕坐标转换成功
                 if (0 < entityHealth && entityHealth <= 100 && draw.WorldToScreen(entityPos3, entityPos2))
                 {
-                    //遍历人物的骨骼点
+                    DWORD64 other_Adress_Entity = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList2 + i * 0x8);
+                    mem.ReadBone(other_Adress_Entity, BONE_HEAD, enetityHeadPos3);
+                    if (draw.WorldToScreen(enetityHeadPos3, enetityHeadPos2)) {
+                        //计算方框的高度和宽度
+                        float heigh = entityPos2.y - enetityHeadPos2.y;
+                        float width = heigh / 2;
+
+                        //画矩形
+                        RECT rect;
+                        rect.left;
+                        rect.left = entityPos2.x - (width/2);
+                        rect.top = enetityHeadPos2.y;
+                        rect.right = entityPos2.x + (width / 2);
+                        rect.bottom = entityPos2.y;
+                        HBRUSH hBrush2 = CreateSolidBrush(RGB(128,0,0));
+                        FrameRect(hDc,&rect,hBrush2);
+
+                    }
+
+#if 0
+                    //遍历人物的骨骼点，测试代码
                     Vec3 tmpBone3;
                     Vec2 tmpBone2;
                     for (int i = 0; i < 50; i++)
-                    {   
-                        DWORD64 other_Adress_Entity  = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList2 + i * 0x8);
+                    {
+                        DWORD64 other_Adress_Entity = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList2 + i * 0x8);
                         mem.ReadBone(other_Adress_Entity, i, tmpBone3);
                         wchar_t buffer[MAXBYTE];
-						wsprintf(buffer, L"%d", i);
+                        wsprintf(buffer, L"%d", i);
                         if (draw.WorldToScreen(tmpBone3, tmpBone2)) {
                             TextOut(hDc, tmpBone2.x, tmpBone2.y, buffer, 2);
                         }
                     }
+#endif // 0
+
                 }
             }
 

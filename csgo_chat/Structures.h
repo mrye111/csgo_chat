@@ -28,3 +28,6 @@ struct Vec4
     float w = 0;
 
 };
+
+//Í·²¿¹Ç÷À×ø±ê
+#define BONE_HEAD 6
