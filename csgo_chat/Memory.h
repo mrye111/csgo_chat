@@ -51,22 +51,25 @@ class Memory
 		//读取人物骨骼
 		void ReadBone(DWORD64 dwEntity, int nBoneIndex, Vec3& bonePos) {
 			//通过偏移找到骨骼基址
-			DWORD64 tmp, tmp1, tmp2, tmp3 ,tmp4,dwBoneMatrix;
+			DWORD64 tmp, tmp1, tmp2, tmp3 ,tmp4,tmp5, dwBoneMatrix;
 			tmp = 0x00;
-			tmp1 = 0x128;
-			tmp2 = 0x20;
-			tmp3 = 0xD8;
-			tmp4 = 0x0;
+			tmp1 = 0x330;
+			tmp2 = 0x40;
+			tmp3 = 0x0;
+			tmp4 = 0x20;
+			tmp5 = 0xD8;
 			
 
 			tmp = ReadMeory<DWORD64>(dwEntity + tmp1);
 			tmp = ReadMeory<DWORD64>(tmp + tmp2);
-			dwBoneMatrix = ReadMeory<DWORD64>(tmp + tmp3);
+			tmp = ReadMeory<DWORD64>(tmp + tmp3);
+			tmp = ReadMeory<DWORD64>(tmp + tmp4);
+			dwBoneMatrix = ReadMeory<DWORD64>(tmp + tmp5);
 			
 
 			bonePos.x = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
-			bonePos.y = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
-			bonePos.z = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
+			bonePos.y = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0x1C);
+			bonePos.z = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0x2C);
 
 		
 

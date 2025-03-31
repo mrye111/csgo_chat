@@ -25,7 +25,6 @@ void Loop()
     DeleteObject(hHrush);
 
 
-
     if (LocalPlayer)
     {
         //遍历所有角色
@@ -66,6 +65,7 @@ void Loop()
                         DWORD64 other_Adress_Entity  = mem.ReadMeory<DWORD64>(offsets.clientBase + offsets.dw_EntityList2 + i * 0x8);
                         mem.ReadBone(other_Adress_Entity, i, tmpBone3);
                         wchar_t buffer[MAXBYTE];
+						wsprintf(buffer, L"%d", i);
                         if (draw.WorldToScreen(tmpBone3, tmpBone2)) {
                             TextOut(hDc, tmpBone2.x, tmpBone2.y, buffer, 2);
                         }
@@ -100,44 +100,41 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     //uMsg = WM_PRINT;
     switch (uMsg) // 根据消息类型 uMsg 进行分支处理
     {
-    case WM_PRINT:
-        // 当窗口需要被打印或绘制到设备上下文（DC）时触发
-        // wParam: 指向目标设备上下文的句柄 (HDC)
-        // lParam: 指定打印选项（如PRF_CHECKVISIBLE等标志）
-        // 通常用于自定义窗口的打印行为，目前为空，未实现具体逻辑
-        Loop();
-        break;
+        case WM_PAINT:
+            // 当窗口需要被打印或绘制到设备上下文（DC）时触发
+            // wParam: 指向目标设备上下文的句柄 (HDC)
+            // lParam: 指定打印选项（如PRF_CHECKVISIBLE等标志）
+            // 通常用于自定义窗口的打印行为，目前为空，未实现具体逻辑
+            Loop();
+            break;
+        case WM_CREATE:
+            // 在窗口创建完成后、显示之前触发
+            // wParam: 未使用
+            // lParam: 指向 CREATESTRUCT 结构体的指针，包含窗口创建的参数（如位置、大小等）
+            // 常用于初始化窗口资源（如控件、内存分配等），目前为空
+            break;
 
-    case WM_CREATE:
-        // 在窗口创建完成后、显示之前触发
-        // wParam: 未使用
-        // lParam: 指向 CREATESTRUCT 结构体的指针，包含窗口创建的参数（如位置、大小等）
-        // 常用于初始化窗口资源（如控件、内存分配等），目前为空
-        break;
+        case WM_DESTROY:
+            // 当窗口被销毁时触发，通常在窗口关闭后调用
+            // wParam: 未使用
+            // lParam: 未使用
+            // 常用于清理资源（如释放内存、保存状态等），目前为空
+            DestroyWindow(hwnd);
+            break;
 
-    case WM_DESTROY:
-        // 当窗口被销毁时触发，通常在窗口关闭后调用
-        // wParam: 未使用
-        // lParam: 未使用
-        // 常用于清理资源（如释放内存、保存状态等），目前为空
-        DestroyWindow(hwnd);
-        break;
-
-    case WM_CLOSE:
-        // 当用户尝试关闭窗口（如点击关闭按钮）时触发
-        // wParam: 未使用
-        // lParam: 未使用
-        // 默认情况下会调用 DestroyWindow 来销毁窗口，可在此添加确认逻辑
-        // 目前为空，未阻止默认关闭行为
-        PostQuitMessage(0);
-        break;
-
-    default:
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
-        // 处理所有未显式列出的消息
-        // 通常将未处理的消息交给 DefWindowProc 处理，以确保系统默认行为
-        // 目前为空，未实现具体逻辑
-        break;
+        case WM_CLOSE:
+            // 当用户尝试关闭窗口（如点击关闭按钮）时触发
+            // wParam: 未使用
+            // lParam: 未使用
+            // 默认情况下会调用 DestroyWindow 来销毁窗口，可在此添加确认逻辑
+            // 目前为空，未阻止默认关闭行为
+            PostQuitMessage(0);
+            break;
+        default:
+            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            // 处理所有未显式列出的消息
+            // 通常将未处理的消息交给 DefWindowProc 处理，以确保系统默认行为
+            // 目前为空，未实现具体逻辑
     }
     // 注意：当前代码没有返回值，通常应返回 DefWindowProc(hwnd, uMsg, wParam, lParam)
     // 以处理未显式处理的消息，这里可能需要补充
@@ -256,6 +253,7 @@ void CreateExternalWindow()
     // SW_SHOW: 显示窗口并激活它（如果之前隐藏），将其置于当前 Z 顺序位置
     // 作用：使窗口可见，如果窗口之前未显示，此函数会触发 WM_SHOWWINDOW 消息
 
+
     // 更新窗口
     UpdateWindow(draw.hExWnd);
     // UpdateWindow: 强制更新窗口的客户区
@@ -293,7 +291,7 @@ void CreateExternalWindow()
        // 每次循环重新获取游戏窗口的位置和尺寸，避免全屏等情况。
        GetWindowRect(offsets.hWnd, &draw.rectGame);
        // 检查并处理指定窗口的消息队列，处理我们自己创建模版窗口的消息
-       if (PeekMessage(&msg, draw.hExWnd, 0, 0, PM_REMOVE))
+       if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
        {
            // PeekMessage: 检查消息队列中是否有消息，不等待消息到达
            // &msg: 指向 MSG 结构体的指针，用于接收消息内容

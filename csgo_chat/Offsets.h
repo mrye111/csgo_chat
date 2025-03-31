@@ -9,7 +9,7 @@ public:
 	//人物数组偏移
 	DWORD64 dw_EntityList = 0x189A280;
 	//人物数组偏移2
-	DWORD64 dw_EntityList2 = 0x01987A98;
+	DWORD64 dw_EntityList2 = 0x189A2A0;
 	//人物自身偏移
 	DWORD64 dw_LocalPlayer = 0x188CF70;
 	//人物矩阵偏移
