@@ -39,4 +39,6 @@ int main()
 	cout << "\n CS2¸¨ÖúDemo" << endl;
 
 	CreateExternalWindow();
+
+
 }

@@ -97,6 +97,7 @@ WPARAM wParam: 附加参数1，与具体消息相关，提供额外信息
 LPARAM lParam: 附加参数2，与具体消息相关，提供额外信息
 */
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    //uMsg = WM_PRINT;
     switch (uMsg) // 根据消息类型 uMsg 进行分支处理
     {
     case WM_PRINT:
@@ -299,7 +300,7 @@ void CreateExternalWindow()
            // draw.hExWnd: 目标窗口的句柄，仅处理此窗口的消息
            // 0, 0: 消息范围，此处为 0 表示不筛选特定消息类型，处理所有消息
            // PM_REMOVE: 如果有消息，从队列中移除并填充到 msg 结构体
-           // 返回值: 非零（TRUE）表示有消息，零（FALSE）表示无消息
+           // 返回值: 非零（TRUE）表示有消息，零（FALSE）表示无消息阿
 
            //分发键盘消息
            TranslateMessage(&msg);

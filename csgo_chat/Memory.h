@@ -24,7 +24,7 @@ class Memory
 
 		//封装自己的内存读写函数
 		template<typename T>
-		T ReadMeory(DWORD32 adress) {
+		T ReadMeory(DWORD64 adress) {
 			T buffer;
 			// 调用 Windows API 函数 ReadProcessMemory，从指定进程的内存中读取数据
 			ReadProcessMemory(
@@ -38,7 +38,7 @@ class Memory
 		};
 		
 		template<typename T>
-		void WriteMemory(DWORD32 adress, T data) {
+		void WriteMemory(DWORD64 adress, T data) {
 			WriteProcessMemory(
 				offsets.hProcess,      // HANDLE 类型，目标进程的句柄，用于标识要读取的进程
 				(LPVOID)adress,       // LPVOID 类型，指向目标进程内存中的起始地址（需要强制转换为const void*）
@@ -51,19 +51,18 @@ class Memory
 		//读取人物骨骼
 		void ReadBone(DWORD64 dwEntity, int nBoneIndex, Vec3& bonePos) {
 			//通过偏移找到骨骼基址
-			DWORD64 tmp, tmp1, tmp2, tmp3 ,tmp4, tmp5,dwBoneMatrix;
+			DWORD64 tmp, tmp1, tmp2, tmp3 ,tmp4,dwBoneMatrix;
 			tmp = 0x00;
-			tmp1 = 0X18;
-			tmp2 = 0xD8;
-			tmp3 = 0x10;
-			tmp4 = 0xD8;
-			tmp5 = 0x00;
-			ReadMeory<DWORD64>(dwEntity + tmp);
-			ReadMeory<DWORD64>(tmp + tmp1);
-			ReadMeory<DWORD64>(tmp + tmp2);
-			ReadMeory<DWORD64>(tmp + tmp3);
-			ReadMeory<DWORD64>(tmp + tmp4);
-			dwBoneMatrix = ReadMeory<DWORD64>(tmp + tmp5);
+			tmp1 = 0x128;
+			tmp2 = 0x20;
+			tmp3 = 0xD8;
+			tmp4 = 0x0;
+			
+
+			tmp = ReadMeory<DWORD64>(dwEntity + tmp1);
+			tmp = ReadMeory<DWORD64>(tmp + tmp2);
+			dwBoneMatrix = ReadMeory<DWORD64>(tmp + tmp3);
+			
 
 			bonePos.x = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);
 			bonePos.y = ReadMeory<float>(dwBoneMatrix + nBoneIndex * 0x30 + 0xC);

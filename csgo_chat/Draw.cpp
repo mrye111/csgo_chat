@@ -30,10 +30,10 @@ BOOL Draw::WorldToScreen(Vec3& wordPos, Vec2& screenPos)
     ReadProcessMemory(offsets.hProcess, (LPCVOID)(offsets.clientBase + offsets.dw_ViewMatrix), matrix, 64, NULL);
     //世界坐标转剪辑坐标
     Vec4 clipPos;
-    clipPos.x = matrix[0][0] * clipPos.x + matrix[0][1] * clipPos.y + matrix[0][2] * clipPos.z + matrix[0][3] * clipPos.w;
-    clipPos.y = matrix[1][0] * clipPos.x + matrix[1][1] * clipPos.y + matrix[1][2] * clipPos.z + matrix[1][3] * clipPos.w;
-    clipPos.z = matrix[2][0] * clipPos.x + matrix[2][1] * clipPos.y + matrix[2][2] * clipPos.z + matrix[2][3] * clipPos.w;
-    clipPos.w = matrix[3][0] * clipPos.x + matrix[3][1] * clipPos.y + matrix[3][2] * clipPos.z + matrix[3][3] * clipPos.w;
+    clipPos.x = matrix[0][0] * wordPos.x + matrix[0][1] * wordPos.y + matrix[0][2] * wordPos.z + matrix[0][3];
+    clipPos.y = matrix[1][0] * wordPos.x + matrix[1][1] * wordPos.y + matrix[1][2] * wordPos.z + matrix[1][3];
+    clipPos.z = matrix[2][0] * wordPos.x + matrix[2][1] * wordPos.y + matrix[2][2] * wordPos.z + matrix[2][3];
+    clipPos.w = matrix[3][0] * wordPos.x + matrix[3][1] * wordPos.y + matrix[3][2] * wordPos.z + matrix[3][3];
     //如果屏幕坐标小于0.01f，则不在屏幕内 
     if (clipPos.w < 0.01f) return false;
 
